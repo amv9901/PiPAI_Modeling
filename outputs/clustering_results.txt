@@ -1,0 +1,44 @@
+Data: 330 rows x 7 cols; mean extras spend $26.01
+Split: 231 train / 99 test; StandardScaler fit on train; features = ['age', 'visits_per_month', 'avg_visit_minutes', 'classes_per_month', 'months_member', 'monthly_extras_spend']
+
+ k | train spread | test spread | test % drop vs k-1
+ 1 |       1386.0 |       600.7 | 
+ 2 |        950.3 |       403.6 | 32.8%
+ 3 |        611.5 |       284.2 | 29.6%
+ 4 |        336.0 |       150.0 | 47.2%
+ 5 |        310.5 |       141.4 | 5.7%
+ 6 |        286.6 |       136.2 | 3.7%
+ 7 |        270.8 |       125.2 | 8.1%
+ 8 |        254.6 |       125.3 | -0.0%
+
+Chosen k = 4. Test spread k=1 (baseline) = 600.7; k=4 = 150.0 (75.0% lower)
+
+Centroids (training fit, original units):
+    age  visits_per_month  avg_visit_minutes  classes_per_month  months_member  monthly_extras_spend
+0  27.3               3.0               40.7                0.9            5.8                   9.0
+1  64.2              12.0               46.5                3.9           57.8                  17.4
+2  33.2              16.0               64.5                0.9           30.3                  24.9
+3  42.6               9.4               55.1                7.0           24.0                  47.3
+
+Segment profile, all 330 members:
+          age  visits_per_month  avg_visit_minutes  classes_per_month  months_member  monthly_extras_spend  members  share_spend_lt_20
+segment                                                                                                                               
+0        27.6               3.1               40.4                0.9            6.3                   9.3       70               0.84
+1        64.0              12.0               47.0                3.9           58.7                  16.4       60               0.62
+2        33.3              16.0               64.4                0.9           29.9                  24.6      109               0.39
+3        41.9               9.1               55.4                6.9           22.9                  46.9       91               0.01
+
+Average net per member if credited, by segment:
+segment
+0    2.64
+1   -0.75
+2   -4.08
+3   -9.84
+Segments that get the credit: [0]
+
+New member -> segment 0, gets credit: True
+
+Monthly net from the credit, all 330 members:
+  Baseline (credit to everyone): $-1,200
+  v1 (credit to segments [0] only, 70 members): $185
+  Difference: $1,385/month

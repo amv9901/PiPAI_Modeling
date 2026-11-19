@@ -1,0 +1,38 @@
+Data: 400 rows x 8 cols; no-shows 91 (22.8%)
+Split: 280 train (22.9% no-show) / 120 test (22.5% no-show)
+
+v1: DecisionTreeClassifier(max_depth=3, min_samples_leaf=10), features = ['lead_time_days', 'prior_no_shows', 'age', 'distance_miles', 'sms_reminder', 'new_patient', 'appointment_hour']
+|--- prior_no_shows <= 2.50
+|   |--- sms_reminder <= 0.50
+|   |   |--- prior_no_shows <= 0.50
+|   |   |   |--- weights: [46.00, 10.00] class: 0
+|   |   |--- prior_no_shows >  0.50
+|   |   |   |--- weights: [23.00, 29.00] class: 1
+|   |--- sms_reminder >  0.50
+|   |   |--- age <= 18.50
+|   |   |   |--- weights: [9.00, 5.00] class: 0
+|   |   |--- age >  18.50
+|   |   |   |--- weights: [136.00, 5.00] class: 0
+|--- prior_no_shows >  2.50
+|   |--- weights: [2.00, 15.00] class: 1
+
+Feature importance:
+prior_no_shows      0.627
+sms_reminder        0.302
+age                 0.071
+lead_time_days      0.000
+distance_miles      0.000
+new_patient         0.000
+appointment_hour    0.000
+
+=== Test appointments ===
+Baseline (everyone shows): TN=93 FP=0 FN=27 TP=0 | accuracy=0.775 precision=0.000 recall=0.000
+   value on 120 test appts = $-3,240  ($-27.00 per appt; $-135,000/yr at 5,000 appts)
+v1 tree: TN=86 FP=7 FN=7 TP=20 | accuracy=0.883 precision=0.741 recall=0.741
+   value on 120 test appts = $-1,260  ($-10.50 per appt; $-52,500/yr at 5,000 appts)
+v1 training accuracy = 0.839 vs test accuracy = 0.883
+Improvement per appointment = $16.50; per year = $82,500
+
+=== Upcoming appointments ===
+D: OVERBOOK  | path: prior_no_shows <= 2.5 -> sms_reminder <= 0.5 -> prior_no_shows > 0.5 -> leaf #4 (52 train appts, 56% no-show)
+E: HOLD  | path: prior_no_shows <= 2.5 -> sms_reminder > 0.5 -> age > 18.5 -> leaf #7 (141 train appts, 4% no-show)
